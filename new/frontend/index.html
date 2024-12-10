@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 防止浏览器缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>工具集合</title>
+    <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
+    
+    <!-- 预加载资源 -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix" as="script">
+    <link rel="preload" href="https://cdn.plot.ly/plotly-2.27.0.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js" as="script">
+    
+    <!-- 预加载页面 -->
+    <link rel="prefetch" href="pages/data-analysis.html">
+    <link rel="prefetch" href="pages/regression-analysis.html">
+</head>
+<body>
+    <header>
+        <h1>工具集合</h1>
+    </header>
+    <div class="container">
+        <div class="tools-grid">
+            <a href="pages/data-analysis.html" class="tool-card" data-tool="model-evaluation">
+                <div class="tool-icon">📊</div>
+                <h3>模型评估工具</h3>
+                <p>用于分析模型性能，生成混淆矩阵和评估指标</p>
+                <div class="loading-indicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>加载中...</span>
+                </div>
+            </a>
+            <a href="pages/regression-analysis.html" class="tool-card" data-tool="regression">
+                <div class="tool-icon">📈</div>
+                <h3>回归分析工具</h3>
+                <p>支持线性回归和逻辑回归分析，自动生成可视化报告</p>
+                <div class="loading-indicator" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>加载中...</span>
+                </div>
+            </a>
+            <!-- 其他工具卡片 -->
+            <div class="tool-card coming-soon">
+                <div class="tool-icon">⚡</div>
+                <h3>更多工具</h3>
+                <p>敬请期待...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加时间戳防止缓存 -->
+    <script>
+        // 开启调试模式
+        const DEBUG = true;
+        
+        // 添加错误处理
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            if (DEBUG) {
+                console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            }
+            return false;
+        };
+
+        // 添加未捕获的Promise错误处理
+        window.addEventListener('unhandledrejection', function(event) {
+            if (DEBUG) {
+                console.error('Unhandled promise rejection:', event.reason);
+            }
+        });
+
+        // 优化页面跳转
+        document.querySelectorAll('.tool-card[data-tool]').forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                const tool = this.getAttribute('data-tool');
+                
+                // 显示加载指示器
+                this.querySelector('.loading-indicator').style.display = 'flex';
+                
+                // 预加载目标页面资源
+                const preloader = new Image();
+                preloader.src = href;
+                
+                // 添加状态参数
+                const url = new URL(href, window.location.origin);
+                url.searchParams.set('source', 'homepage');
+                url.searchParams.set('tool', tool);
+                
+                // 延迟跳转以显示加载动画
+                setTimeout(() => {
+                    window.location.href = url.toString();
+                }, 300);
+            });
+        });
+
+        // 预加载脚本
+        function preloadScript(url) {
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            document.head.appendChild(script);
+        }
+
+        // 当页面加载完成后预加载其他资源
+        window.addEventListener('load', function() {
+            // 预加载常用的脚本
+            const scripts = [
+                'https://cdn.jsdelivr.net/npm/chart.js',
+                'https://cdn.jsdelivr.net/npm/chartjs-chart-matrix',
+                'https://cdn.plot.ly/plotly-2.27.0.min.js',
+                'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs',
+                'https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js'
+            ];
+            
+            scripts.forEach(url => {
+                setTimeout(() => preloadScript(url), 1000);
+            });
+        });
+    </script>
+</body>
+</html>

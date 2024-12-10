@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 防止浏览器缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>回归分析工具</title>
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <a href="../index.html" class="back-btn">← 返回主页</a>
+            <h1>回归分析工具</h1>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="analysis-container">
+            <!-- 文件上传区域 -->
+            <div class="upload-section">
+                <h2>数据上传</h2>
+                <div class="file-upload">
+                    <input type="file" id="csvFile" accept=".csv" />
+                    <button id="uploadBtn">上传CSV文件</button>
+                </div>
+            </div>
+
+            <!-- 数据预览区域 -->
+            <div class="preview-section" style="display: none;">
+                <h2>数据预览</h2>
+                <div class="data-preview">
+                    <table id="previewTable"></table>
+                </div>
+            </div>
+
+            <!-- 分析配置区域 -->
+            <div class="analysis-config" style="display: none;">
+                <h2>分析配置</h2>
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label for="xAxis">选择X轴（特征）：</label>
+                        <select id="xAxis"></select>
+                    </div>
+                    <div class="config-item">
+                        <label for="yAxis">选择Y轴（目标）：</label>
+                        <select id="yAxis"></select>
+                    </div>
+                    <div class="config-item">
+                        <label for="modelType">选择模型：</label>
+                        <select id="modelType">
+                            <option value="linear">线性回归</option>
+                            <option value="logistic">逻辑回归</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 数据预处理选项 -->
+                <div class="preprocessing-options">
+                    <h3>数据预处理选项</h3>
+                    <div class="preprocessing-grid">
+                        <div class="preprocessing-item">
+                            <label>
+                                <input type="checkbox" id="fillMissing" checked>
+                                自动填充缺失值
+                            </label>
+                        </div>
+                        <div class="preprocessing-item">
+                            <label>
+                                <input type="checkbox" id="removeOutliers">
+                                移除异常值
+                            </label>
+                        </div>
+                        <div class="preprocessing-item">
+                            <label>
+                                <input type="checkbox" id="normalizeData" checked>
+                                数据标准化
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="analyzeBtn">开始分析</button>
+            </div>
+
+            <!-- 分析结果区域 -->
+            <div class="results-section" style="display: none;">
+                <h2>分析结果</h2>
+                
+                <!-- 模型评估指标 -->
+                <div class="metrics-container">
+                    <h3>模型评估指标</h3>
+                    <div id="modelMetrics" class="metrics-grid"></div>
+                </div>
+
+                <!-- 可视化图表 -->
+                <div class="visualization-container">
+                    <div class="chart-wrapper">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div id="additionalChart"></div>
+                    </div>
+                </div>
+
+                <!-- 分析报告 -->
+                <div class="report-section">
+                    <h3>分析报告</h3>
+                    <div id="analysisReport"></div>
+                    <button id="exportReport">导出报告</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 添加时间戳防止缓存 -->
+    <script>
+        // 开启调试模式
+        const DEBUG = true;
+        
+        // 添加错误处理
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            if (DEBUG) {
+                console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            }
+            return false;
+        };
+
+        // 添加未捕获的Promise错误处理
+        window.addEventListener('unhandledrejection', function(event) {
+            if (DEBUG) {
+                console.error('Unhandled promise rejection:', event.reason);
+            }
+        });
+
+        // 动态加载JavaScript文件
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src + '?v=' + new Date().getTime(); // 添加时间戳防止缓存
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        // 加载主要的JavaScript文件
+        loadScript('../js/regressionAnalysis.js')
+            .catch(error => {
+                if (DEBUG) {
+                    console.error('Failed to load script:', error);
+                }
+            });
+    </script>
+</body>
+</html> 

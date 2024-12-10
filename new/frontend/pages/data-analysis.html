@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 防止浏览器缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>模型评估工具</title>
+    <link rel="stylesheet" href="../css/style.css?v=<?php echo time(); ?>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-matrix"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="nav-bar">
+            <a href="../index.html" class="back-btn">← 返回主页</a>
+            <h1>模型评估工具</h1>
+        </nav>
+    </header>
+    <div class="container">
+        <div id="dataAnalysis" class="tool">
+            <!-- 这里的内容会被 JavaScript 动态替换 -->
+        </div>
+    </div>
+    
+    <!-- 添加时间戳防止缓存 -->
+    <script>
+        // 开启调试模式
+        const DEBUG = true;
+        
+        // 添加错误处理
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            if (DEBUG) {
+                console.error('Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nError object: ' + JSON.stringify(error));
+            }
+            return false;
+        };
+
+        // 添加未捕获的Promise错误处理
+        window.addEventListener('unhandledrejection', function(event) {
+            if (DEBUG) {
+                console.error('Unhandled promise rejection:', event.reason);
+            }
+        });
+
+        // 动态加载JavaScript文件
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src + '?v=' + new Date().getTime(); // 添加时间戳防止缓存
+                script.onload = resolve;
+                script.onerror = reject;
+                document.body.appendChild(script);
+            });
+        }
+
+        // 加载主要的JavaScript文件
+        loadScript('../components/dataAnalysis.js')
+            .catch(error => {
+                if (DEBUG) {
+                    console.error('Failed to load script:', error);
+                }
+            });
+    </script>
+</body>
+</html> 
